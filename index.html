@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <div class="container">
+    <div class="row">
+    <div class="col-md-12">
+    <select class="custom-select" name="page" onchange="location = this.value;">
+        <option value="proportion.html">What's the proportion of jobs in DS?</option>
+        <option value="312551084_features.html">Does the salary change based on experiences?</option>
+        <option value="312551084_features_all.html">Do bigger companies pay more salary in DS jobs?</option>
+        <option value="312551084_scatterplot.html">Does the salary change over the years for every experience level?</option>
+        <option value="312551084_scatterplot.html">How to know the composition of expertise in each job?</option>
+    </select>
+    <h1>Overview</h1>
+    <article>--- This page displays lolipop chart based on the average value of the selected attributes in each genre. ---</article>
+    <div style="padding-top: 13px;">
+        Selected features: 
+        <select id='feature' onchange="render()">Current Attribute:
+            <option value="Select an attribute">--Select an attribute--</option>
+            <option value="popularity">popularity</option>
+            <option value="duration_ms">duration_ms</option>
+            <option value="danceability">danceability</option>
+            <option value="energy">energy</option>
+            <option value="speechiness">speechiness</option>
+            <option value="acousticness">acousticness</option>
+            <option value="instrumentalness">instrumentalness</option>
+            <option value="liveness">liveness</option>
+            <option value="valence">valence</option>
+            <option value="tempo">tempo</option>
+        </select>
+    </div>
+    <div style="padding-top: 13px;">
+        Sorted by: 
+        <select id='sorted_by' onchange="render()">Current Attribute:
+            <option value="mean">mean</option>
+            <option value="max">max</option>
+        </select>
+    </div>
+    <div id="my_dataviz"></div>
+    </div>
+    </div>
+    </div>
+</body>
+</html>
+
+<script>
+
+    function max_range(data, type='max') {
+        if(type=='max'){
+            return d3.max(data, d => d.max);
+        }
+        else{
+            return d3.min(data, d => d.max);
+        }
+    }
+
+    // set the dimensions and margins of the graph
+    const margin = {top: 50, right: 0, bottom: 50, left: 0},
+        width = 900 - margin.left - margin.right,
+        height = 3000 - margin.top - margin.bottom;
+        
+    const svg_translation = {x: 150, y: 50};
+
+    function render () {
+        var selected_attr = document.getElementById("feature").value;
+        var sorted_by = document.getElementById("sorted_by").value;
+        // console.log(selected_attr);
+        d3.select("#my_dataviz").html("");
+
+        if (selected_attr == "Select an attribute") { return; }
+        // append the svg object
+        const svg = d3.select("#my_dataviz")
+                .append("svg")
+                    .attr("width", width + margin.left + margin.right + svg_translation.x)
+                    .attr("height", height + margin.top + margin.bottom + svg_translation.y)
+                .append("g")
+                    .attr("transform", `translate(${svg_translation.x}, ${svg_translation.y})`);
+
+        d3.csv("http://vis.lab.djosix.com:2023/data/spotify_tracks.csv").then( function(loadedData) {
+
+            var data = [];
+
+            loadedData = loadedData.map(function(row) {
+                return {
+                    'genre': row.track_genre,
+                    'Value': +row[selected_attr]
+                }
+            });
+
+            // loadedData = loadedData.filter(item => Object.values(item).some(isNaN));
+
+            let sumsAndCounts = {};
+            let maxValues = [];
+            let means = [];
+            let maxs = [];
+            let max_value;
+
+            // Summing and counting
+            loadedData.forEach(item => {
+                if (sumsAndCounts[item.genre]) {
+                    sumsAndCounts[item.genre].sum += item.Value;
+                    sumsAndCounts[item.genre].count += 1;
+                } else {
+                    sumsAndCounts[item.genre] = { sum: item.Value, count: 1 };
+                }
+            });
+
+            // Finding the maximum
+            loadedData.forEach(item => {
+                if (maxValues[item.genre]) {
+                    if (item.Value > maxValues[item.genre]) {
+                        maxValues[item.genre] = item.Value;
+                    }
+                } else {
+                    maxValues[item.genre] = item.Value;
+                }
+            });
+
+            for (let genre in maxValues) {
+                data.push({
+                    'genre': genre, 
+                    'max': maxValues[genre],
+                    'mean': Math.round((sumsAndCounts[genre].sum / sumsAndCounts[genre].count + Number.EPSILON) * 100) / 100
+                });
+            }
+
+
+            // sort data
+            data.sort(function(b, a) {
+                if(sorted_by == 'mean'){
+                    return a.mean - b.mean;
+                }
+                else{
+                    return a.max - b.max;
+                }
+            });
+
+            if(max_range(data, type='max') < 0){
+                max_value = max_range(data, type='min');
+            }
+            else{
+                max_value = max_range(data, type='max');
+            }
+
+            console.log(data);
+
+            // Add X axis
+            const x = d3.scaleLinear()
+                .domain([Math.min(0, max_value * 1.1), Math.max(0, max_value * 1.1)])
+                .range([max_value>0 ? 0 : width - svg_translation.x, max_value>0 ? width - svg_translation.x : 0]);
+            svg.append("g")
+                .attr("transform", `translate(0, 0)`)
+                .call(d3.axisTop(x))
+                .selectAll("text")
+                .style("font-size", 12)
+                //.attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end");
+
+            // Y axis
+            const y = d3.scaleBand()
+                .range([ 0, height + svg_translation.y ])
+                .domain(data.map(function(d) { return d.genre; }))
+                .padding(1);
+            svg.append("g")
+                .call(d3.axisLeft(y))
+                .style("font-size", 12)
+
+            // Lines
+            svg.selectAll("myline")
+                .data(data)
+                .join("line")
+                .attr("x1", function(d) { return x(d[sorted_by]); })
+                .attr("x2", x(0))
+                .attr("y1", function(d) { return y(d.genre); })
+                .attr("y2", function(d) { return y(d.genre); })
+                .attr("stroke", "grey")
+
+            // Circles
+            svg.selectAll("mycircle")
+                .data(data)
+                .join("circle")
+                .attr("cx", function(d) { return x(d.mean); })
+                .attr("cy", function(d) { return y(d.genre); })
+                .attr("r", "7")
+                .style("fill", "#69b3a2")
+                .attr("stroke", "black")
+
+            svg.selectAll("mycircle")
+                .data(data)
+                .join("circle")
+                .attr("cx", function(d) { return x(d.max); })
+                .attr("cy", function(d) { return y(d.genre); })
+                .attr("r", "7")
+                .style("fill", "#d54b7d")
+                .attr("stroke", "black")
+
+            svg.selectAll("mycircle")
+                .data(data)
+                .join("circle")
+                .attr("cx", function(d) { return x(d.max); })
+                .attr("cy", function(d) { return y(d.genre); })
+                .attr("r", "7")
+                .style("fill", "#d54b7d")
+                .attr("stroke", "black")
+            
+            // text
+            svg.selectAll("myText")
+                .data(data)
+                .join("text")
+                .style("font-size", 12)
+                .style("text-align", "left")
+                .attr("x", width - svg_translation.x - 50)
+                .attr("y", function(d) { return y(d.genre); })
+                .text(function(d) {return `mean: ${d.mean}, max: ${d.max}`})
+        });
+    }
+
+</script>
