@@ -26,7 +26,71 @@ function loadData () {
 
 function transformData (data) {
     return new Promise((resolve, reject) => {
-        resolve(data);
+        // Step 1: Aggregate data by 'Job Title' and calculate counts
+        const jobTitleCounts = {};
+        data.forEach((d) => {
+            const jobTitle = d['Job Title'];
+            jobTitleCounts[jobTitle] = (jobTitleCounts[jobTitle] || 0) + 1;
+        });
+        // Step 2: Group the data into five categories
+        let groupedData = {
+            name: 'Job Title',
+            children: [
+            {
+                name: 'Data Scientist',
+                children: [],
+            },
+            {
+                name: 'Data Engineer',
+                children: [],
+            },
+            {
+                name: 'Data Analyst',
+                children: [],
+            },
+            {
+                name: 'ML Engineer',
+                children: [],
+            },
+            {
+                name: 'Others',
+                children: [],
+            },
+            ],
+        };
+
+        // Step 3: Populate the groupedData object
+        data.forEach((d) => {
+            const jobTitle = d['Job Title'];
+            const total = jobTitleCounts[jobTitle].toString();
+
+            let category;
+            if (jobTitle.includes('Data') && jobTitle.includes('Scien')) {
+                category = groupedData.children[0];
+            } else if (jobTitle.includes('Data') && jobTitle.includes('Engineer')) {
+                category = groupedData.children[1];
+            } else if (jobTitle.includes('Analy')) {
+                category = groupedData.children[2];
+            } else if (jobTitle.includes('Machine Learning') || jobTitle.includes('ML')) {
+                category = groupedData.children[3];
+            } else {
+                category = groupedData.children[4];
+            }
+
+            let jobTitleObject = category.children.find((item) => item.name === jobTitle);
+            if (!jobTitleObject) {
+                jobTitleObject = {
+                    name: jobTitle,
+                    total,
+                };
+                category.children.push(jobTitleObject);
+            }
+        });
+
+        s = JSON.stringify(groupedData);
+        console.log(s);
+        
+        resolve(groupedData);
     })
 }
 
