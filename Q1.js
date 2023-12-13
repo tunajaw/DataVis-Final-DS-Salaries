@@ -135,32 +135,43 @@ function render (data_url) {
             .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
             .on("click", function(d) { return zoom(node == d.parent ? root : d.parent); });
       
+        function handleMouseOver(d) {
+            tooltip.style("display", "block")
+                    .html(d.name + "<br>" + "Total: " + d.total);
+        }
+        
+        function handleMouseMove(d) {
+            var tooltipX = d3.event.pageX - 350;
+            var tooltipY = d3.event.pageY - 20;
+            tooltipX = Math.max(0, tooltipX); // Prevent going off-screen left
+            tooltipY = Math.max(0, tooltipY); // Prevent going off-screen top
+            tooltip.style("left", tooltipX + "px")
+                    .style("top", tooltipY + "px");
+        }
+        
+        function handleMouseOut(d) {
+            tooltip.style("display", "none");
+        }
+        
+        // Apply these to both rect and text
         cell.append("svg:rect")
             .attr("width", function(d) { return d.dx - 1; })
             .attr("height", function(d) { return d.dy - 1; })
-            .style("fill", function(d) {return color(d.parent.name); })
-            .on("mouseover", function(d) {
-              // Show the tooltip with the "total" value
-              tooltip.style("display", "block")
-                    .html(d.name + "<br>" + "Total: " + d.total);
-            })
-            .on("mousemove", function(d) {
-              // Update the tooltip's position to follow the mouse cursor
-              tooltip.style("left", (d3.event.pageX - 350) + "px")
-                    .style("top", (d3.event.pageY - 20) + "px");
-            })
-            .on("mouseout", function(d) {
-              // Hide the tooltip on mouseout
-              tooltip.style("display", "none");
-            });
-      
+            .style("fill", function(d) { return color(d.parent.name); })
+            .on("mouseover", handleMouseOver)
+            .on("mousemove", handleMouseMove)
+            .on("mouseout", handleMouseOut);
+        
         cell.append("svg:text")
             .attr("x", function(d) { return d.dx / 2; })
             .attr("y", function(d) { return d.dy / 2; })
             .attr("dy", ".35em")
             .attr("text-anchor", "middle")
             .text(function(d) { return d.name; })
-            .style("opacity", function(d) { d.w = this.getComputedTextLength(); return d.dx > d.w ? 1 : 0; });
+            .style("opacity", function(d) { d.w = this.getComputedTextLength(); return d.dx > d.w ? 1 : 0; })
+            .on("mouseover", handleMouseOver)
+            .on("mousemove", handleMouseMove)
+            .on("mouseout", handleMouseOut);
       
         d3.select(window).on("click", function() { zoom(root); });
       });
