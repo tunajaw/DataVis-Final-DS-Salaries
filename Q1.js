@@ -91,9 +91,9 @@ function transformData (data) {
                 category = groupedData.children[0];
             } else if (jobTitle.includes('Data') && jobTitle.includes('Engineer')) {
                 category = groupedData.children[1];
-            } else if (jobTitle.includes('Analy')) {
+            } else if (jobTitle.includes('Analy') || jobTitle.includes('BI')) {
                 category = groupedData.children[2];
-            } else if (jobTitle.includes('Machine Learning') || jobTitle.includes('ML')) {
+            } else if (jobTitle.includes('Machine Learning') || jobTitle.includes('ML') || jobTitle.includes('Vision') || jobTitle.includes('AI') || jobTitle.includes('NLP')) {
                 category = groupedData.children[3];
             } else {
                 category = groupedData.children[4];
