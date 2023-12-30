@@ -32,6 +32,28 @@ function transformData (data) {
             const jobTitle = d['Job Title'];
             jobTitleCounts[jobTitle] = (jobTitleCounts[jobTitle] || 0) + 1;
         });
+
+        // Step 2: Aggregate data by 'Job Title' and calculate job counts & experience levels
+        const experienceLevels = ['Executive', 'Senior', 'Mid', 'Entry'];
+        const aggregatedData = {};
+
+        data.forEach(row => {
+            const jobTitle = row['Job Title'];
+            const experienceLevel = row['Experience Level'];
+
+            // Initialize the job title in the aggregatedData object if it doesn't exist
+            if (!aggregatedData[jobTitle]) {
+                aggregatedData[jobTitle] = new Array(experienceLevels.length).fill(0);
+            }
+
+            // Find the index of the experience level
+            const index = experienceLevels.indexOf(experienceLevel);
+            if (index !== -1) {
+                aggregatedData[jobTitle][index]++;
+            }
+        });
+
+        console.log(aggregatedData);
         // Step 2: Group the data into five categories
         let groupedData = {
             name: 'Job Title',
@@ -76,18 +98,20 @@ function transformData (data) {
             } else {
                 category = groupedData.children[4];
             }
-
+            
             let jobTitleObject = category.children.find((item) => item.name === jobTitle);
             if (!jobTitleObject) {
                 jobTitleObject = {
                     name: jobTitle,
                     total,
+                    experience: aggregatedData[jobTitle]
                 };
                 category.children.push(jobTitleObject);
             }
         });
 
         s = JSON.stringify(groupedData);
+        console.log(s);
         var blob = new Blob([s], { type: 'json/applcation' });
         var url = URL.createObjectURL(blob);
         resolve(url);
@@ -103,6 +127,8 @@ function render (data_url) {
         color = d3.scale.category20c(),
         root,
         node;
+
+    const opacities = [1.0, 0.8, 0.6, 0.4];
 
     var treemap = d3.layout.treemap()
         .round(false)
@@ -134,10 +160,31 @@ function render (data_url) {
             .attr("class", "cell")
             .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
             .on("click", function(d) { return zoom(node == d.parent ? root : d.parent); });
+
+        function _calculateProportions(array) {
+            const sum = array.reduce((a, b) => a + b, 0);
+            return array.map(element => _round_2_dec(element*100 / sum));
+        }
+
+        function _round_2_dec(x) {
+            return Math.round(x * 100) / 100;
+        }
+
+        function _getTooltipContent(d) {
+            const proportionArray = _calculateProportions(d.experience);
+            let s = 
+                d.name + "<br>" +
+                "Total: " + d.total + "<br>" + 
+                "Executive: " + d.experience[0] + "(" + proportionArray[0] + "%)" + "<br>" +
+                "Senior: " + d.experience[1] + "(" + proportionArray[1] + "%)" + "<br>" +
+                "Mid: " + d.experience[2] + "(" + proportionArray[2] + "%)" + "<br>" +
+                "Entry: " + d.experience[3] + "(" + proportionArray[3] + "%)";
+            return s;
+        }
       
         function handleMouseOver(d) {
             tooltip.style("display", "block")
-                    .html(d.name + "<br>" + "Total: " + d.total);
+                    .html(_getTooltipContent(d));
         }
         
         function handleMouseMove(d) {
@@ -153,14 +200,28 @@ function render (data_url) {
             tooltip.style("display", "none");
         }
         
-        // Apply these to both rect and text
-        cell.append("svg:rect")
-            .attr("width", function(d) { return d.dx - 1; })
-            .attr("height", function(d) { return d.dy - 1; })
-            .style("fill", function(d) { return color(d.parent.name); })
-            .on("mouseover", handleMouseOver)
-            .on("mousemove", handleMouseMove)
-            .on("mouseout", handleMouseOut);
+        cell.each(function(d) {
+            const node = d3.select(this);
+            let yOffset = 0;
+        
+            d.experience.forEach((count, index) => {
+                const rectHeight = Math.max(d.dy * (count / d3.sum(d.experience)) - 1, 0);
+                
+        
+                node.append("svg:rect")
+                    .attr("x", 0)
+                    .attr("y", yOffset)
+                    .attr("width", d.dx - 1)
+                    .attr("height", rectHeight)
+                    .style("fill", function(d) { return color(d.parent.name); })
+                    .style("opacity", opacities[index])
+                    .on("mouseover", handleMouseOver)
+                    .on("mousemove", handleMouseMove)
+                    .on("mouseout", handleMouseOut);
+        
+                yOffset += rectHeight;
+            });
+        });
         
         cell.append("svg:text")
             .attr("x", function(d) { return d.dx / 2; })
@@ -176,27 +237,40 @@ function render (data_url) {
         d3.select(window).on("click", function() { zoom(root); });
       });
       
-      function zoom(d) {
+    function zoom(d) {
         var kx = w / d.dx, ky = h / d.dy;
         x.domain([d.x, d.x + d.dx]);
         y.domain([d.y, d.y + d.dy]);
-      
+    
         var t = svg.selectAll("g.cell").transition()
             .duration(d3.event.altKey ? 7500 : 750)
             .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
-      
-        t.select("rect")
-            .attr("width", function(d) { return kx * d.dx - 1; })
-            .attr("height", function(d) { return ky * d.dy - 1; })
-      
+    
+        t.each(function(d) {
+            const node = d3.select(this);
+            let yOffset = 0;
+    
+            d.experience.forEach((count, index) => {
+                let rectHeight = ky * d.dy * (count / d3.sum(d.experience)) - 1;
+                rectHeight = Math.max(rectHeight, 0); // Ensure the height is not negative
+    
+                node.selectAll("rect").filter(function(_, i) { return i === index; })
+                    .attr("width", kx * d.dx - 1)
+                    .attr("height", rectHeight)
+                    .attr("y", yOffset);
+    
+                yOffset += rectHeight;
+            });
+        });
+    
         t.select("text")
             .attr("x", function(d) { return kx * d.dx / 2; })
             .attr("y", function(d) { return ky * d.dy / 2; })
             .style("opacity", function(d) { return kx * d.dx > d.w ? 1 : 0; });
-      
+    
         node = d;
         d3.event.stopPropagation();
-      }
+    }
 }
 
 
