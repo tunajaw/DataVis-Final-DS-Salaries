@@ -7,7 +7,7 @@
     <title>Overview</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="Q2.css">
-    <script src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -22,10 +22,31 @@
                 </select>
                 <h1>Overview</h1>
                 <article>--- What's the proportion of jobs in DS? ---</article>
-                <div id="tooltip" style="display: none;"></div>
                 <div id="body"></div>
             </div>
         </div>
+    </div>
+    <div class="chart-wrapper" id="chart-distro1"></div>
+    <div class="chart-wrapper" id="chart-distro1"></div>
+
+    <!--Sorry about all the inline JS. It is a quick way to show  what options are available-->
+    <div class="chart-options">
+        <p>Box Options</p>
+        <button onclick="if(chart1.boxPlots.chartOptions.showBox){chart1.boxPlots.change({showBox:false})}else{chart1.boxPlots.change({showBox:true})}">Toggle Box</button>
+        <button onclick="if(chart1.boxPlots.chartOptions.boxWidth===6){chart1.boxPlots.change({boxWidth:2})}else{chart1.boxPlots.change({boxWidth:6})}">Change Box Width</button>
+        <button onclick="if(currentColor=='dark'){chart1.boxPlots.change({colors:d3.scale.category10()});currentColor='color';}else{chart1.boxPlots.change({colors:['#555']});currentColor='dark';}">Change Box Colors</button>
+        <button onclick="if(chart1.boxPlots.chartOptions.showMean){chart1.boxPlots.change({showMean:false})}else{chart1.boxPlots.change({showMean:true})}">Toggle Mean</button>
+        <button onclick="if(chart1.boxPlots.chartOptions.showMedian){chart1.boxPlots.change({showMedian:false})}else{chart1.boxPlots.change({showMedian:true})}">Toggle Median</button>
+        <button onclick="if(chart1.boxPlots.chartOptions.showWhiskers){chart1.boxPlots.change({showWhiskers:false})}else{chart1.boxPlots.change({showWhiskers:true})}">Toggle Whiskers</button>
+        <button onclick="if(chart1.boxPlots.chartOptions.showOutliers){chart1.boxPlots.change({showOutliers:false})}else{chart1.boxPlots.change({showOutliers:true})}">Toggle Outliers</button>
+    </div>
+
+    <div class="chart-options">
+        <p>Violin Options</p>
+        <button onclick="if(chart1.violinPlots.violinOptions.showArea){chart1.violinPlots.change({showArea:false, showLine:false});}else{chart1.violinPlots.change({showArea:true, showLine:true})}">Toggle Violin</button>
+        <button onclick="if(chart1.violinPlots.violinOptions.violinWidth===100){chart1.violinPlots.change({violinWidth:50})}else{chart1.violinPlots.change({violinWidth:100})}">Change Violin Width</button>
+        <button onclick="if(currentViolinColor=='dark'){chart1.violinPlots.change({colors:d3.scale.category10()});currentViolinColor='color';}else{chart1.violinPlots.change({colors:['#555']});currentViolinColor='dark';}">Change Violin Colors</button>
+        <button onclick="if(chart1.violinPlots.violinOptions.resolution===60){chart1.violinPlots.change({resolution:30})}else{chart1.violinPlots.change({resolution:60})}">Change Violin Resolution</button>
     </div>
     <script src="Q2.js"></script>
 </body>
