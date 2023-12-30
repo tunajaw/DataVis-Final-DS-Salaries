@@ -1,9 +1,7 @@
 // set the dimensions and margins of the graph
-const margin = {top: 50, right: 0, bottom: 50, left: 0},
-    width = 900 - margin.left - margin.right,
-    height = 3000 - margin.top - margin.bottom;
-    
-const svg_translation = {x: 150, y: 50};
+var margin = {top: 10, right: 30, bottom: 30, left: 80},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
 
 
 function loadData () {
@@ -24,184 +22,86 @@ function loadData () {
     })
 };
 
-function transformData (data) {
-    return new Promise((resolve, reject) => {
-        // Step 1: Aggregate data by 'Job Title' and calculate counts
-        const jobTitleCounts = {};
-        data.forEach((d) => {
-            const jobTitle = d['Job Title'];
-            jobTitleCounts[jobTitle] = (jobTitleCounts[jobTitle] || 0) + 1;
-        });
-        // Step 2: Group the data into five categories
-        let groupedData = {
-            name: 'Job Title',
-            children: [
-            {
-                name: 'Data Scientist',
-                children: [],
-            },
-            {
-                name: 'Data Engineer',
-                children: [],
-            },
-            {
-                name: 'Data Analyst',
-                children: [],
-            },
-            {
-                name: 'ML Engineer',
-                children: [],
-            },
-            {
-                name: 'Others',
-                children: [],
-            },
-            ],
-        };
+function renderViolinPlot(data) {
+    // Nest the data by Company Size
+    const nestedData = d3.nest().key(d => d["Company Size"]).entries(data);
+    
+    // Append the SVG object to the body of the page
+    const svg = d3.select("#body")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        // Step 3: Populate the groupedData object
-        data.forEach((d) => {
-            const jobTitle = d['Job Title'];
-            const total = jobTitleCounts[jobTitle].toString();
+    // Build and Show the Y scale
+    var y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => +d["Salary in USD"])])  // Note that here the Y scale is set manually
+        .range([height, 0])
+    svg.append("g").call( d3.axisLeft(y) )
 
-            let category;
-            if (jobTitle.includes('Data') && jobTitle.includes('Scien')) {
-                category = groupedData.children[0];
-            } else if (jobTitle.includes('Data') && jobTitle.includes('Engineer')) {
-                category = groupedData.children[1];
-            } else if (jobTitle.includes('Analy')) {
-                category = groupedData.children[2];
-            } else if (jobTitle.includes('Machine Learning') || jobTitle.includes('ML')) {
-                category = groupedData.children[3];
-            } else {
-                category = groupedData.children[4];
-            }
+     // Build and Show the X scale. It is a band scale like for a boxplot: each group has an dedicated RANGE on the axis. This range has a length of x.bandwidth
+    var x = d3.scaleBand()
+        .range([ 0, width ])
+        .domain(nestedData.map(d => d.key))
+        .padding(0.05)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+  
+    // Features of the histogram
+    var histogram = d3.histogram()
+    .domain(y.domain())
+    .thresholds(y.ticks(20))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
+    .value(d => d)
 
-            let jobTitleObject = category.children.find((item) => item.name === jobTitle);
-            if (!jobTitleObject) {
-                jobTitleObject = {
-                    name: jobTitle,
-                    total,
-                };
-                category.children.push(jobTitleObject);
-            }
-        });
-
-        s = JSON.stringify(groupedData);
-        var blob = new Blob([s], { type: 'json/applcation' });
-        var url = URL.createObjectURL(blob);
-        resolve(url);
+    // Compute the binning for each group of the dataset
+    var sumstat = d3.nest()  // nest function allows to group the calculation per level of a factor
+    .key(function(d) { return d["Company Size"];})
+    .rollup(function(d) {   // For each key..
+    input = d.map(function(g) { return +g["Salary in USD"];})    // Keep the variable called Sepal_Length
+    bins = histogram(input)   // And compute the binning on it.
+    return(bins)
     })
+    .entries(data)
+
+    // What is the biggest number of value in a bin? We need it cause this value will have a width of 100% of the bandwidth.
+    var maxNum = 0
+    for ( i in sumstat ){
+        allBins = sumstat[i].value
+        //console.log(allBins);
+        lengths = allBins.map(function(a){return a.length;})
+        longest = d3.max(lengths)
+        if (longest > maxNum) { maxNum = longest }
+    }
+
+    // The maximum width of a violin must be x.bandwidth = the width dedicated to a group
+    var xNum = d3.scaleLinear()
+    .range([0, x.bandwidth()])
+    .domain([-maxNum,maxNum])
+
+    // Add the shape to this svg!
+    svg
+    .selectAll("myViolin")
+    .data(sumstat)
+    .enter()        // So now we are working group per group
+    .append("g")
+    .attr("transform", function(d){ return("translate(" + x(d.key) +" ,0)") } ) // Translation on the right to be at the group position
+    .append("path")
+    .datum(function(d){ return(d.value)})     // So now we are working bin per bin
+    .style("stroke", "none")
+    .style("fill","#69b3a2")
+    .attr("d", d3.area()
+        .x0(function(d){ return(xNum(-d.length)) } )
+        .x1(function(d){ return(xNum(d.length)) } )
+        .y(function(d){ return(y(d.x0)) } )
+        .curve(d3.curveCatmullRom)    // This makes the line smoother to give the violin appearance. Try d3.curveStep to see the difference
+    )
 }
-
-function render (data_url) {
-
-    var w = 1280 - 80,
-        h = 800 - 180,
-        x = d3.scale.linear().range([0, w]),
-        y = d3.scale.linear().range([0, h]),
-        color = d3.scale.category20c(),
-        root,
-        node;
-
-    var treemap = d3.layout.treemap()
-        .round(false)
-        .size([w, h])
-        .sticky(true)
-        .value(function(d) { return d.total; });
-
-    var svg = d3.select("#body").append("div")
-        .attr("class", "chart")
-        .style("width", w + "px")
-        .style("height", h + "px")
-    .append("svg:svg")
-        .attr("width", w)
-        .attr("height", h)
-    .append("svg:g")
-        .attr("transform", "translate(.5,.5)");
-
-    var tooltip = d3.select("#tooltip");
-
-    d3.json(data_url, function(data) {
-        console.log(data);
-        node = root = data;
-        var nodes = treemap.nodes(root)
-            .filter(function(d) {return !d.children; });
-      
-        var cell = svg.selectAll("g")
-            .data(nodes)
-          .enter().append("svg:g")
-            .attr("class", "cell")
-            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-            .on("click", function(d) { return zoom(node == d.parent ? root : d.parent); });
-      
-        function handleMouseOver(d) {
-            tooltip.style("display", "block")
-                    .html(d.name + "<br>" + "Total: " + d.total);
-        }
-        
-        function handleMouseMove(d) {
-            var tooltipX = d3.event.pageX - 350;
-            var tooltipY = d3.event.pageY - 20;
-            tooltipX = Math.max(0, tooltipX); // Prevent going off-screen left
-            tooltipY = Math.max(0, tooltipY); // Prevent going off-screen top
-            tooltip.style("left", tooltipX + "px")
-                    .style("top", tooltipY + "px");
-        }
-        
-        function handleMouseOut(d) {
-            tooltip.style("display", "none");
-        }
-        
-        // Apply these to both rect and text
-        cell.append("svg:rect")
-            .attr("width", function(d) { return d.dx - 1; })
-            .attr("height", function(d) { return d.dy - 1; })
-            .style("fill", function(d) { return color(d.parent.name); })
-            .on("mouseover", handleMouseOver)
-            .on("mousemove", handleMouseMove)
-            .on("mouseout", handleMouseOut);
-        
-        cell.append("svg:text")
-            .attr("x", function(d) { return d.dx / 2; })
-            .attr("y", function(d) { return d.dy / 2; })
-            .attr("dy", ".35em")
-            .attr("text-anchor", "middle")
-            .text(function(d) { return d.name; })
-            .style("opacity", function(d) { d.w = this.getComputedTextLength(); return d.dx > d.w ? 1 : 0; })
-            .on("mouseover", handleMouseOver)
-            .on("mousemove", handleMouseMove)
-            .on("mouseout", handleMouseOut);
-      
-        d3.select(window).on("click", function() { zoom(root); });
-      });
-      
-      function zoom(d) {
-        var kx = w / d.dx, ky = h / d.dy;
-        x.domain([d.x, d.x + d.dx]);
-        y.domain([d.y, d.y + d.dy]);
-      
-        var t = svg.selectAll("g.cell").transition()
-            .duration(d3.event.altKey ? 7500 : 750)
-            .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
-      
-        t.select("rect")
-            .attr("width", function(d) { return kx * d.dx - 1; })
-            .attr("height", function(d) { return ky * d.dy - 1; })
-      
-        t.select("text")
-            .attr("x", function(d) { return kx * d.dx / 2; })
-            .attr("y", function(d) { return ky * d.dy / 2; })
-            .style("opacity", function(d) { return kx * d.dx > d.w ? 1 : 0; });
-      
-        node = d;
-        d3.event.stopPropagation();
-      }
-}
+  
 
 
 
 loadData()
-    .then(rawdata => transformData(rawdata))
-    .then(transformedData => render(transformedData))
+    .then(rawdata => renderViolinPlot(rawdata))
     .catch(error => console.error("An error occurred:", error));
