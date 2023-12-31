@@ -25,16 +25,13 @@
                 </select>
                 <h1>Overview</h1>
                 <article>--- What's the proportion of jobs in DS? ---</article>
+                <select id="jobTitleDropdown" onchange="draw_barchart()" class="custom-select">
+                </select>
+                <select id="expertiseLevelDropdown" onchange="draw_barchart()" class="custom-select">
+                </select>
                 <div id="my_dataviz"></div>
             </div>
-            <select id="jobTitleDropdown" onchange="draw_barchart()" class="custom-select">
-                <option value="AI Developer">AI Developer</option>
-                <!-- Options for Job Title -->
-            </select>
-            <select id="expertiseLevelDropdown" onchange="draw_barchart()" class="custom-select">
-                <option value="Entry">Entry</option>
-                <!-- Options for Expertise Level -->
-            </select>
+            <p id="no_data"></p>
         </div>
         </div>
     </div>

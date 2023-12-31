@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-var margin = {top: 20, right: 30, bottom: 40, left: 90},
+var margin = {top: 20, right: 30, bottom: 40, left: 190},
     width = 460 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
     
@@ -64,15 +64,23 @@ function transformData (data) {
             transformedData[key] = meanSalaries;
         }
 
-         // Get selected values from dropdowns
+        // Get selected values from dropdowns
         const selectedJobTitle = document.getElementById('jobTitleDropdown').value;
         const selectedExpertiseLevel = document.getElementById('expertiseLevelDropdown').value;
         selectedData = transformedData[selectedJobTitle+'_' + selectedExpertiseLevel];
-        selectedData.columns =['Company Location', 'Mean Salary in USD'];
-        // console.log(selectedData);
-        console.log("transform data");
-        console.log(transformedData);
-        resolve(selectedData);
+        if(selectedData){
+            var paragraph = document.getElementById('no_data');
+            paragraph.innerHTML = '';
+            selectedData.columns =['Company Location', 'Mean Salary in USD'];
+            resolve(selectedData);
+        }
+        else {
+            var paragraph = document.getElementById('no_data');
+            paragraph.innerHTML = '';
+            paragraph.textContent = 'No data!';
+            document.body.appendChild(paragraph);
+            d3.select("#my_dataviz").selectAll("*").remove();
+        }
     })
 }
 
@@ -132,6 +140,40 @@ const render = (data) =>{
   
 }
 
+function create_options(){
+    loadData().then(rawdata => {
+        console.log(rawdata);
+        var Job_set = new Set();
+        var Exp_set = new Set();
+        rawdata.forEach(data => {
+            Job_set.add(data['Job Title']);
+            Exp_set.add(data['Experience Level']);
+        });
+        
+        var Job_element = document.getElementById('jobTitleDropdown');
+        var Exp_element = document.getElementById('expertiseLevelDropdown');
+        
+        Job_set.forEach(function(job){
+            var option = document.createElement('option');
+            // Set the value and text content of the <option>
+            option.value = job;
+            option.textContent = job;
+            // Append the <option> to the <select>
+            Job_element.appendChild(option);
+        });
+
+        Exp_set.forEach(function(exp){
+            var option = document.createElement('option');
+            // Set the value and text content of the <option>
+            option.value = exp;
+            option.textContent = exp;
+            // Append the <option> to the <select>
+            Exp_element.appendChild(option);
+        });
+    })
+}
+
+create_options();
 function draw_barchart() {
     loadData()
         .then(rawdata => transformData(rawdata))
