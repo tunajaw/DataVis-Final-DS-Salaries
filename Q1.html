@@ -22,9 +22,19 @@
                 </select>
                 <h1>Overview</h1>
                 <article>--- What's the proportion of jobs in DS? ---</article>
-                <div id="tooltip" style="display: none;"></div>
+                <div style="padding-top: 13px;">
+                    Selected features: 
+                    <select id='feature' onchange="draw_treemap()">Selected By:
+                        <option value="Overall">Overall</option>
+                        <option value="Executive">Executive</option>
+                        <option value="Senior">Senior</option>
+                        <option value="Mid">Mid</option>
+                        <option value="Entry">Entry</option>
+                    </select>
+                </div>
                 <div id="body"></div>
             </div>
+            <div id="tooltip" style="display: none;"></div>
         </div>
     </div>
     <script src="Q1.js"></script>

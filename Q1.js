@@ -8,6 +8,9 @@ const svg_translation = {x: 150, y: 50};
 
 function loadData () {
     return new Promise((resolve, reject) => {
+        var selected_attr = document.getElementById("feature").value;
+        console.log(selected_attr);
+
         d3.csv("Latest_Data_Science_Salaries.csv", function(loadedData){
             //filter NaN
             let data = loadedData.filter(function(row){
@@ -18,6 +21,11 @@ function loadData () {
                 }
                 return true;
             })
+            
+            loadedData = loadedData.filter(function(row){
+                if(selected_attr == 'Overall') return true;
+                return row['Experience Level'] == selected_attr;
+            })
             data = loadedData;
             resolve(data);
         });
@@ -26,6 +34,7 @@ function loadData () {
 
 function transformData (data) {
     return new Promise((resolve, reject) => {
+        // Step 1: Filter by 
         // Step 1: Aggregate data by 'Job Title' and calculate counts
         const jobTitleCounts = {};
         data.forEach((d) => {
@@ -111,7 +120,7 @@ function transformData (data) {
         });
 
         s = JSON.stringify(groupedData);
-        console.log(s);
+        // console.log(s);
         var blob = new Blob([s], { type: 'json/applcation' });
         var url = URL.createObjectURL(blob);
         resolve(url);
@@ -119,6 +128,8 @@ function transformData (data) {
 }
 
 function render (data_url) {
+
+    d3.select("#body").selectAll("*").remove();
 
     var w = 1280 - 80,
         h = 800 - 180,
@@ -188,7 +199,7 @@ function render (data_url) {
         }
         
         function handleMouseMove(d) {
-            var tooltipX = d3.event.pageX - 350;
+            var tooltipX = d3.event.pageX - 200;
             var tooltipY = d3.event.pageY - 20;
             tooltipX = Math.max(0, tooltipX); // Prevent going off-screen left
             tooltipY = Math.max(0, tooltipY); // Prevent going off-screen top
@@ -274,8 +285,13 @@ function render (data_url) {
 }
 
 
+function draw_treemap() {
+    loadData()
+        .then(rawdata => transformData(rawdata))
+        .then(transformedData => render(transformedData))
+        .catch(error => console.error("An error occurred:", error));
+};
 
-loadData()
-    .then(rawdata => transformData(rawdata))
-    .then(transformedData => render(transformedData))
-    .catch(error => console.error("An error occurred:", error));
+draw_treemap();
+
+
