@@ -7,27 +7,37 @@
     <title>Overview</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="Q3.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <!-- <script src="https://unpkg.com/d3@5.6.0/dist/d3.min.js"></script> -->
+    <!-- <script src="http://d3js.org/d3.v3.min.js"></script> -->
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+    
 </head>
 <body>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <select class="custom-select" name="page" onchange="location = this.value;">
+                    <option value="Q3.html">Do bigger companies pay more salary in DS jobs?</option>
                     <option value="Q1.html">What's the proportion of jobs in DS?</option>
-                    <option value="Q2.html">Do bigger companies pay more salary in DS jobs?</option>
-                    <option value="Q3.html">How to know the composition of expertise in each job?</option>
-                    <option value="Q4.html">TBA</option>
-                    <option value="Q5.html">Not Implemented</option>
+                    <option value="Q2.html">Does the salary change based on experiences?</option>
+                    <option value="Q4.html">Does the salary change over the years for every experience level?</option>
+                    <option value="Q5.html">How to know the composition of expertise in each job?</option>
                 </select>
                 <h1>Overview</h1>
-                <article>--- How to know the composition of expertise in each job? ---</article>
-                <div id="tooltip" style="display: none;"></div>
-                <div id="body"></div>
+                <article>--- What's the proportion of jobs in DS? ---</article>
+                <div id="my_dataviz"></div>
             </div>
+            <select id="jobTitleDropdown" onchange="draw_barchart()" class="custom-select">
+                <option value="AI Developer">AI Developer</option>
+                <!-- Options for Job Title -->
+            </select>
+            <select id="expertiseLevelDropdown" onchange="draw_barchart()" class="custom-select">
+                <option value="Entry">Entry</option>
+                <!-- Options for Expertise Level -->
+            </select>
+        </div>
         </div>
     </div>
-    <script src="Q3_sankey.js"></script>
     <script src="Q3.js"></script>
 </body>
 </html>

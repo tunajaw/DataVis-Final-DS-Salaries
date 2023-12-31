@@ -1,6 +1,100 @@
 body {
-    overflow: hidden;
-    margin: 0;
-    font-size: 14px;
-    font-family: "Helvetica Neue", Helvetica;
-  }
+  margin: 0px;
+  font-family: sans-serif;
+}
+
+
+text {
+	font-family: sans-serif;
+  font-size: 1rem;
+}
+
+.tick text {
+  font-size: 0.8em;
+  fill: #8E8883;
+  cursor: pointer;
+  
+}
+
+.label {
+  font-size: 2em;
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+}
+
+.item {
+  display: inline-block;
+  text-align: center;
+}
+
+.container2 {
+  display: flex;
+  flex-direction: column; 
+}
+
+.row {
+  display: flex;
+  justify-content: space-between; 
+  margin-bottom: 10px; 
+}
+h2 input[type="number"] {
+  font-size: 1em;
+  width: 50px; 
+}
+h2{
+	margin-bottom:0px;
+  margin-top:20px;
+}
+
+.radio-item input[type="radio"] {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.radio-item label {
+  display: flex;
+  align-items: left;
+}
+ 
+.item1 {
+  flex: 8; 
+  display: flex;
+  flex-direction: column;
+}
+.item2 {
+  flex: 2;  
+}
+#ButtonMenu {
+  text-align: left;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: 10px;
+  opacity: 0;
+  pointer-events: none;
+
+}
+.tooltip text{
+  font-size: 0.8em;
+  fill: #8E8883;
+}
+
+.chart {
+ transform: rotate(0deg); 
+}
+
+#menuSelect {
+  font-size: 1.2rem;
+}
+
+#menu {
+ margin-bottom: 200px; 
+}
