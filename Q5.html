@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="Q5.css">
+    <script src="http://d3js.org/d3.v4.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <select class="custom-select" name="page" onchange="location = this.value;">
+                    <option value="Q5.html">The correlations between job count and mean salary</option>
+                    <option value="Q1.html">What's the proportion of jobs in DS?</option>
+                    <option value="Q2.html">Does the salary change based on experiences?</option>
+                    <option value="Q3.html">Do bigger companies pay more salary in DS jobs?</option>
+                    <option value="Q4.html">Does the salary change over the years for every experience level?</option>
+                </select>
+                <br> <br>
+                <text>xrange: </text>
+                <input type="range" name="mySlider" id="mySlider", min="10" max="130" value="60", step="5">
+                <text id="corVal">60</text>
+                <br>
+                <text>yrange: </text>
+                <input type="range" name="mySlider2" id="mySlider2", min="100000" max="400000" value="250000", step="50000">
+                <text id="corVal2">250000</text>
+                <div id="body"></div>
+            </div>
+            <div id="tooltip" style="display: none;"></div>
+            
+        </div>
+    </div>
+    <script src="Q5.js"></script>
+</body>
+</html>

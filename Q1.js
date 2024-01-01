@@ -34,7 +34,6 @@ function loadData () {
 
 function transformData (data) {
     return new Promise((resolve, reject) => {
-        // Step 1: Filter by 
         // Step 1: Aggregate data by 'Job Title' and calculate counts
         const jobTitleCounts = {};
         data.forEach((d) => {
