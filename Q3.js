@@ -1,7 +1,7 @@
 // set the dimensions and margins of the graph
-var margin = {top: 20, right: 30, bottom: 40, left: 190},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+var margin = {top: 20, right: 30, bottom: 50, left: 190},
+    width = 860 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
     
 function loadData () {
     return new Promise((resolve, reject) => {

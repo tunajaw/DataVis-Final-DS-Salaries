@@ -13,15 +13,22 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+                <h2>Select a question:</h2>
                 <select class="custom-select" name="page" onchange="location = this.value;">
-                    <option value="Q4.html">The experience composition of different size of companies</option>
-                    <option value="Q1.html">What's the proportion of jobs in DS?</option>
-                    <option value="Q2.html">Does the salary change based on experiences?</option>
-                    <option value="Q3.html">Different regions paying salaries for same job</option>
-                    <option value="Q5.html">The correlations between job count and mean salary</option>
+                    <option value="Q4.html">Q4: The experience composition of different size of companies</option>
+                    <option value="Q1.html">Q1: What's the proportion of jobs in DS?</option>
+                    <option value="Q2.html">Q2: Does the salary change based on company size?</option>
+                    <option value="Q3.html">Q3: Different regions paying salaries for same job</option>
+                    <option value="Q5.html">Q5: The correlations between job count and mean salary</option>
                 </select>
-                <h1>Overview</h1>
-                <article>--- What's the proportion of jobs in DS? ---</article>
+                <!-- <h1>Overview</h1> -->
+                <div class="content">
+                    <text>Introduction: </text>
+                    <p>1. Explore the composition of experience levels across companies of different sizes in the field of Data Science. </p>
+                    <p>2. This stacked bar chart visualizes the distribution of job roles, from Entry to Executive, within large, medium, and small-sized companies. </p>
+                    <p>3. Use the legend to identify each experience level and observe how their proportions vary based on company size. The chart provides insights into the workforce structure, revealing the distribution of expertise levels in different organizational scales.</p>
+                </div>
+                <!-- <article>--- What's the proportion of jobs in DS? ---</article> -->
                 <div id="body"></div>
                 <div id="my_dataviz"></div>
             </div>

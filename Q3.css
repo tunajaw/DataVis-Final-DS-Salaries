@@ -10,7 +10,7 @@ text {
 }
 
 .tick text {
-  font-size: 0.8em;
+  font-size: 1.5em;
   fill: #8E8883;
   cursor: pointer;
   
@@ -21,10 +21,15 @@ text {
   cursor: pointer;
 }
 
-.container {
+/* .container {
   display: flex;
   justify-content: center; 
   align-items: center;
+} */
+
+#jobTitleDropdown,
+#expertiseLevelDropdown {
+  width: 40%; /* Set the width to 50% of the parent container */
 }
 
 .item {

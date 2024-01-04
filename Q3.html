@@ -16,19 +16,34 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+                <h2>Select a question:</h2>
                 <select class="custom-select" name="page" onchange="location = this.value;">
-                    <option value="Q3.html">Different regions paying salaries for same job</option>
-                    <option value="Q1.html">What's the proportion of jobs in DS?</option>
-                    <option value="Q2.html">Does the salary change based on experiences?</option>
-                    <option value="Q4.html">The experience composition of different size of companies</option>
-                    <option value="Q5.html">The correlations between job count and mean salary</option>
+                    <option value="Q3.html">Q3: Different regions paying salaries for same job</option>
+                    <option value="Q1.html">Q1: What's the proportion of jobs in DS?</option>
+                    <option value="Q2.html">Q2: Does the salary change based on company size?</option>
+                    <option value="Q4.html">Q4: The experience composition of different size of companies</option>
+                    <option value="Q5.html">Q5: The correlations between job count and mean salary</option>
                 </select>
-                <h1>Overview</h1>
-                <article>--- What's the proportion of jobs in DS? ---</article>
-                <select id="jobTitleDropdown" onchange="draw_barchart()" class="custom-select">
-                </select>
-                <select id="expertiseLevelDropdown" onchange="draw_barchart()" class="custom-select">
-                </select>
+                <!-- <h1>Overview</h1> -->
+                <div class="content">
+                    <text>Introduction:</text> 
+                    <p>1. Explore how salaries for specific job titles vary across different regions in the field of Data Science. </p>
+                    <p>2. This bar chart visualizes the mean salaries in USD for a selected job title and expertise level across various company locations. </p>
+                    <p>3. Use the dropdown menus to choose the job title and expertise level you're interested in, and observe the salary distribution to gain insights into regional pay differences.</p>
+                </div>
+                <!-- <article>--- Different regions paying salaries for same job ---</article> -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="selected-text">Selected job:</div>
+                        <select id="jobTitleDropdown" onchange="draw_barchart()" class="custom-select"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="selected-text">Selected expertise level:</div>
+                        <select id="expertiseLevelDropdown" onchange="draw_barchart()" class="custom-select"></select>
+                    </div>
+                </div>
+                
+                
                 <div id="my_dataviz"></div>
             </div>
             <p id="no_data"></p>

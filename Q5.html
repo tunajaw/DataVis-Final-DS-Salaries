@@ -13,14 +13,22 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+                <h2>Select a question:</h2>
                 <select class="custom-select" name="page" onchange="location = this.value;">
-                    <option value="Q5.html">The correlations between job count and mean salary</option>
-                    <option value="Q1.html">What's the proportion of jobs in DS?</option>
-                    <option value="Q2.html">Does the salary change based on experiences?</option>
-                    <option value="Q3.html">Different regions paying salaries for same job</option>
-                    <option value="Q4.html">The experience composition of different size of companies</option>
+                    <option value="Q5.html">Q5: The correlations between job count and mean salary</option>
+                    <option value="Q1.html">Q1: What's the proportion of jobs in DS?</option>
+                    <option value="Q2.html">Q2: Does the salary change based on company size?</option>
+                    <option value="Q3.html">Q3: Different regions paying salaries for same job</option>
+                    <option value="Q4.html">Q4: The experience composition of different size of companies</option>
                 </select>
-                <br> <br>
+                <div class="content">
+                    <text>Introduction:</text> 
+                    <p>1. Explore the correlations between job count and mean salary in the realm of Data Science. </p>
+                    <p>2. This scatter plot visualizes the relationship between the number of job positions available and the corresponding average salaries across different job titles. </p>
+                    <p>3. Use the sliders to dynamically adjust the x-axis range (job count) and y-axis range (mean salary) to focus on specific data points. </p>
+                    <p>4. Hover over each point to view detailed information about job titles, counts, and mean salaries. The chart offers insights into how job availability correlates with salary levels, providing valuable perspectives for job seekers and employers alike.</p>
+                </div>
+                <!-- <br> <br> -->
                 <text>xrange: </text>
                 <input type="range" name="mySlider" id="mySlider", min="10" max="130" value="60", step="5">
                 <text id="corVal">60</text>

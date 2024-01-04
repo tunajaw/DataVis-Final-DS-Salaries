@@ -13,15 +13,22 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+                <h3>Select a question:</h3>
                 <select class="custom-select" name="page" onchange="location = this.value;">
-                    <option value="Q2.html">Does the salary change based on experiences?</option>
-                    <option value="Q1.html">What's the proportion of jobs in DS?</option>
-                    <option value="Q3.html">Different regions paying salaries for same job</option>
-                    <option value="Q4.html">The experience composition of different size of companies</option>
-                    <option value="Q5.html">The correlations between job count and mean salary</option>
+                    <option value="Q2.html">Q2: Does the salary change based on company size?</option>
+                    <option value="Q1.html">Q1: What's the proportion of jobs in DS?</option>
+                    <option value="Q3.html">Q3: Different regions paying salaries for same job</option>
+                    <option value="Q4.html">Q4: The experience composition of different size of companies</option>
+                    <option value="Q5.html">Q5: The correlations between job count and mean salary</option>
                 </select>
-                <h1>Overview</h1>
-                <article>--- What's the proportion of jobs in DS? ---</article>
+                <!-- <h1>Overview</h1> -->
+                <div class="content">
+                    <text>Introduction: </text>
+                    <p>1. Explore the relationship between salary and experience levels in the field of Data Science through an interactive box-and-whisker plot and violin plot. </p>
+                    <p>2. This visualization allows you to analyze the distribution of salaries based on different levels of professional experience. </p>
+                    <p>3. Use the provided options to toggle between various display settings and gain insights into the salary landscape for different experience levels.</p>
+                </div>
+                <!-- <article>--- What's the proportion of jobs in DS? ---</article> -->
                 <div id="body"></div>
             </div>
         </div>
