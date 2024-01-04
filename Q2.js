@@ -444,9 +444,18 @@ function makeDistroChart(dataset, xGroup, yValue) {
                 // Get the box size
                 var groupWidth = {left: null, right: null, middle: null};
                 if (vOpts && vOpts.violinWidth) {
-                    groupWidth = updateGroupWidth(vOpts.violinWidth)
+                    if(cName == 'Medium'){
+                        groupWidth = updateGroupWidth(vOpts.violinWidth);
+                    }
+                    else if(cName == 'Large'){
+                        groupWidth = updateGroupWidth(vOpts.violinWidth * 3);
+                    }
+                    else{
+                        groupWidth = updateGroupWidth(vOpts.violinWidth * 5);
+                    }
+                        
                 } else {
-                    groupWidth = updateGroupWidth(100)
+                    groupWidth = updateGroupWidth(100);
                 }
                 // console.log(groupWidth);
                 var leftBound = chart.xScale(cName) + groupWidth.left;
