@@ -74,7 +74,7 @@ function transformData (data) {
         let aggregatedData = [];
         for (let job in categorySalaries) {
             let meanSalary = categorySalaries[job] / categoryCounts[job];
-            aggregatedData.push({'Job Title': job, 'Group': categorizeJobTitle(job), 'salary': +meanSalary.toFixed(2), 'count':+categoryCounts[job]});
+            aggregatedData.push({'Job Title': job, 'Group': categorizeJobTitle(job), 'salary': +meanSalary.toFixed(2), 'count':+ Math.min(categoryCounts[job], 150) });
         }
 
         resolve(aggregatedData);
@@ -111,7 +111,7 @@ function render (data) {
     }
 
     function _getTooltipContent(d) {
-        let s = d['Job Title'] + '<br> Job counts: ' + d['count'] + '<br> Mean salary: $' + d['salary'];
+        let s = d['Job Title'] + '<br> Job counts: ' + (d['count']==150 ? '>150': d['count']) + '<br> Mean salary: $' + d['salary'];
         return s;
     }
 
@@ -122,7 +122,7 @@ function render (data) {
     }
     
     function handleMouseMove(d) {
-        var tooltipX = d3.event.pageX - 100;
+        var tooltipX = d3.event.pageX + 20;
         var tooltipY = d3.event.pageY - 20;
         tooltipX = Math.max(0, tooltipX); // Prevent going off-screen left
         tooltipY = Math.max(0, tooltipY); // Prevent going off-screen top

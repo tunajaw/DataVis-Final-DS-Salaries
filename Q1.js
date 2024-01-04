@@ -198,7 +198,7 @@ function render (data_url) {
         }
         
         function handleMouseMove(d) {
-            var tooltipX = d3.event.pageX - 200;
+            var tooltipX = d3.event.pageX + 20;
             var tooltipY = d3.event.pageY - 20;
             tooltipX = Math.max(0, tooltipX); // Prevent going off-screen left
             tooltipY = Math.max(0, tooltipY); // Prevent going off-screen top
