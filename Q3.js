@@ -88,14 +88,18 @@ const render = (data) =>{
     d3.select("#my_dataviz").selectAll("*").remove();
     console.log("data");
     console.log(data);
+
+    // Sort the data by Mean Salary in USD in descending order
+    data.sort((a, b) => b['Mean Salary in USD'] - a['Mean Salary in USD']);
+
     // append the svg object to the body of the page
     var svg = d3.select("#my_dataviz")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
     // Calculate the maximum salary from the data
     var maxSalary = d3.max(data, function(d) {
         return d['Mean Salary in USD'];
@@ -130,6 +134,7 @@ const render = (data) =>{
         .attr("width", function(d) { return x(d['Mean Salary in USD']); })
         .attr("height", y.bandwidth() )
         .attr("fill", "#69b3a2")
+        
 
 
         // .attr("x", function(d) { return x(d.Country); })
