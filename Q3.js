@@ -193,29 +193,44 @@ function create_options(){
             Job_set.add(data['Job Title']);
             Exp_set.add(data['Experience Level']);
         });
-        
+
+        // Convert Exp_set to array and sort it
+        var sortedExpArray = Array.from(Exp_set).sort((a, b) => {
+            // Define the order for Experience Levels: Entry, Mid, Executive, Senior
+            const order = ['Entry', 'Mid', 'Executive', 'Senior'];
+            return order.indexOf(a) - order.indexOf(b);
+        });
+
         var Job_element = document.getElementById('jobTitleDropdown');
         var Exp_element = document.getElementById('expertiseLevelDropdown');
-        
-        Job_set.forEach(function(job){
+
+        // Append options for Exp_element
+        sortedExpArray.forEach(function(exp){
             var option = document.createElement('option');
-            // Set the value and text content of the <option>
+            option.value = exp;
+            option.textContent = exp;
+            Exp_element.appendChild(option);
+        });
+
+        // Set the default selected option for Exp_element
+        Exp_element.value = sortedExpArray[3]; // Choose the first experience level by default
+
+        // Convert Job_set to array and sort it lexicographically
+        var sortedJobArray = Array.from(Job_set).sort();
+
+        // Append options for Job_element
+        sortedJobArray.forEach(function(job){
+            var option = document.createElement('option');
             option.value = job;
             option.textContent = job;
-            // Append the <option> to the <select>
             Job_element.appendChild(option);
         });
 
-        Exp_set.forEach(function(exp){
-            var option = document.createElement('option');
-            // Set the value and text content of the <option>
-            option.value = exp;
-            option.textContent = exp;
-            // Append the <option> to the <select>
-            Exp_element.appendChild(option);
-        });
+        // Set the default selected option for Job_element
+        Job_element.value = sortedJobArray[39]; // Choose the first job title by default
     })
 }
+
 
 create_options();
 function draw_barchart() {
