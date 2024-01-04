@@ -101,11 +101,11 @@ function render (data) {
 
     function category(cat) {
         dicts = {
-            'Data Science': '#66ff66',
-            'Data Analytics': '#00ffff',
-            'Data Engineer': '#ff6666',
-            'Machine Learning': '#ff66ff',
-            'Others': '#6699ff'
+            'Data Science': '#1f77b4',
+            'Data Analytics': '#ff7f0e',
+            'Data Engineer': '#2ca02c',
+            'Machine Learning': '#d62728',
+            'Others': '#9467bd'
         };
         return dicts[cat];
     }
@@ -137,7 +137,7 @@ function render (data) {
     // Legend
     var color = d3.scaleOrdinal()
         .domain(['Data Science', 'Data Analytics', 'Data Engineer', 'Machine Learning', 'Others'])
-        .range(['#66ff66','#00ffff','#ff6666', '#ff66ff', '#6699ff'])
+        .range(["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd"])
 
     var lbl = d3.scaleOrdinal()
         .domain(['a','b','c','d','e'])

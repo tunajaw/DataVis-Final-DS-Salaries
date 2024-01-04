@@ -134,7 +134,7 @@ function render (data_url) {
         h = 800 - 180,
         x = d3.scale.linear().range([0, w]),
         y = d3.scale.linear().range([0, h]),
-        color = d3.scale.category20c(),
+        color = d3.scale.category10(),
         root,
         node;
 
