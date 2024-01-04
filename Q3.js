@@ -59,6 +59,7 @@ function transformData (data) {
             const meanSalaries = Object.entries(locations).map(([location, { sum, count }]) => ({
                 'Company Location': location,
                 'Mean Salary in USD': sum / count,
+                'count': count,
             }));
 
             transformedData[key] = meanSalaries;
@@ -177,8 +178,9 @@ const render = (data) =>{
     }
 
     function _getTooltipContent(d) {
-        let s = "Salary: $" + _round_2_dec(d['Mean Salary in USD']);
-        return s;
+        let salary = "Salary: $" + _round_2_dec(d['Mean Salary in USD']);
+        let count = "Population: " + d.count; // Assuming 'count' is available in your data
+        return salary + "<br>" + count;
     }
 }
 
