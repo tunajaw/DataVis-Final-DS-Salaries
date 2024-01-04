@@ -105,10 +105,14 @@ h2{
 }
 
 #tooltip {
-  position: absolute;
-  background-color: yellow;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  pointer-events: none;
+    position: absolute;
+    background-color: yellow;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.content {
+  font-size: 14px; /* Adjust the font size as needed */
 }
