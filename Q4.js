@@ -109,9 +109,9 @@ function render (data_url) {
         console.log(data);
 
         // set the dimensions and margins of the graph
-        var margin = {top: 60, right: 300, bottom: 20, left: 50},
-        width = 760 - margin.left - margin.right,
-        height = 450 - margin.top - margin.bottom;
+        var margin = {top: 60, right: 300, bottom: 200, left: 200},
+        width = 910 - margin.left - margin.right,
+        height = 650 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz")
@@ -154,6 +154,21 @@ function render (data_url) {
         // var color = d3.scaleOrdinal()
         //     .domain(subgroups)
         //     .range(['#e41a1c','#377eb8','#4daf4a', '#80648c']);
+
+        // Add X axis label:
+        svg.append("text")
+           .attr("text-anchor", "end")
+           .attr("x", width/2 + margin.left / 8 + 20)
+           .attr("y", height + margin.top/4*3)
+           .text("Company Size");
+
+        // Add Y axis label:
+        svg.append("text")
+           .attr("text-anchor", "end")
+           .attr("transform", "rotate(-90)")
+           .attr("y", -margin.left + width/4 + 50)
+           .attr("x", -margin.top - height/2 + 100)
+           .text("Percentage");
 
         // Legend
         var legend = svg.append("g")

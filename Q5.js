@@ -85,9 +85,9 @@ function render (data) {
     d3.select("#body").selectAll("*").remove();
     var tooltip = d3.select("#tooltip");
     // set the dimensions and margins of the graph
-    var margin = {top: 50, right: 330, bottom: 30, left: 60},
-    width = 1220 - margin.left - margin.right,
-    height = 800 - margin.top - margin.bottom;
+    var margin = {top: 50, right: 330, bottom: 80, left: 70},
+    width = 1080 - margin.left - margin.right,
+    height = 760 - margin.top - margin.bottom;
     // main element
     // append the svg object to the body of the page
     var svg = d3.select("#body")
@@ -157,6 +157,21 @@ function render (data) {
     .enter().append("g")
     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
+    // Add X axis label:
+    svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", width/2 + margin.left / 8 + 20)
+    .attr("y", height + margin.top/4*3)
+    .text("Job counts");
+
+    // Add Y axis label:
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -margin.left + width/4 - 160)
+        .attr("x", -margin.top - height/2 + 100)
+        .text("Salary in USD");
+
     legend.append("text")
         .attr("x", width + 25)
         .attr("y", 9.5)
@@ -192,8 +207,6 @@ function render (data) {
     });
     console.log(data);
 
-    
-    
     // Add X axis
     var x = d3.scaleLinear()
     .domain([0, xrange])
@@ -204,7 +217,7 @@ function render (data) {
 
     // Add Y axis
     var y = d3.scaleLinear()
-    .domain([0, yrange])
+    .domain([20000, yrange])
     .range([ height, 0]);
     svg.append("g")
     .call(d3.axisLeft(y));
@@ -222,10 +235,7 @@ function render (data) {
         .on("mouseover", handleMouseOver)
         .on("mousemove", handleMouseMove)
         .on("mouseout", handleMouseOut);
-    
-    
 }
-
 
 function draw() {
     loadData()
