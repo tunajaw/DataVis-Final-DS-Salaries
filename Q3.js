@@ -124,7 +124,7 @@ const render = (data) =>{
     svg.append("g")
         .call(d3.axisLeft(y))
 
-    //Bars
+    //Bars with tooltip
     svg.selectAll("myRect")
         .data(data)
         .enter()
@@ -134,6 +134,9 @@ const render = (data) =>{
         .attr("width", function(d) { return x(d['Mean Salary in USD']); })
         .attr("height", y.bandwidth() )
         .attr("fill", "#69b3a2")
+        .on("mouseover", handleMouseOver) // Add mouseover event
+        .on("mousemove", handleMouseMove) // Add mousemove event
+        .on("mouseout", handleMouseOut) // Add mouseout event;
         
      // X-axis title
      svg.append("text")
@@ -147,12 +150,36 @@ const render = (data) =>{
         .attr("transform", "translate(" + (-margin.left + 20) + "," + (height / 2) + ")rotate(-90)")
         .text("Company Location");
 
-        // .attr("x", function(d) { return x(d.Country); })
-        // .attr("y", function(d) { return y(d.Value); })
-        // .attr("width", x.bandwidth())
-        // .attr("height", function(d) { return height - y(d.Value); })
-        // .attr("fill", "#69b3a2")
-  
+    // Tooltip div
+    // Tooltip div
+    var tooltip = d3.select("#tooltip")
+
+    function handleMouseOver(d) {
+        tooltip.style("display", "block")
+            .html(_getTooltipContent(d));
+    }
+    
+    function handleMouseMove(d) {
+        var tooltipX = d3.event.pageX - 170;
+        var tooltipY = d3.event.pageY + 10;
+        tooltipX = Math.max(0, tooltipX); // Prevent going off-screen left
+        tooltipY = Math.max(0, tooltipY); // Prevent going off-screen top
+        tooltip.style("left", tooltipX + "px")
+                .style("top", tooltipY + "px");
+    }
+    
+    function handleMouseOut(d) {
+        tooltip.style("display", "none");
+    }
+        
+    function _round_2_dec(x) {
+        return Math.round(x * 100) / 100;
+    }
+
+    function _getTooltipContent(d) {
+        let s = "Salary: $" + _round_2_dec(d['Mean Salary in USD']);
+        return s;
+    }
 }
 
 function create_options(){
