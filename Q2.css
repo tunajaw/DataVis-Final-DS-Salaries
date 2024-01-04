@@ -2,6 +2,8 @@ body {
     margin: 0;
     font-size: 14px;
     font-family: "Helvetica Neue", Helvetica;
+    justify-content: center;
+    align-items: center;
   }
   
   #chart, #header, #footer {
