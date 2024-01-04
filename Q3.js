@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-var margin = {top: 20, right: 30, bottom: 50, left: 190},
+var margin = {top: 20, right: 30, bottom: 100, left: 180},
     width = 860 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
     
@@ -135,7 +135,17 @@ const render = (data) =>{
         .attr("height", y.bandwidth() )
         .attr("fill", "#69b3a2")
         
-
+     // X-axis title
+     svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + (width / 2) + "," + (height + margin.bottom -20 ) + ")")
+        .text("Mean Salary in USD");
+    
+    // Y-axis title
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + (-margin.left + 20) + "," + (height / 2) + ")rotate(-90)")
+        .text("Company Location");
 
         // .attr("x", function(d) { return x(d.Country); })
         // .attr("y", function(d) { return y(d.Value); })
