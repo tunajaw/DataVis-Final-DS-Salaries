@@ -2,27 +2,37 @@ var currentColor = 'dark';
 var currentViolinColor = 'dark';
 var chart1;
 
-d3.csv("Latest_Data_Science_Salaries.csv", function(loadedData){
-    //filter NaN
-    let data = loadedData.filter(function(row){
-        for(let key in row) {
-            if (row[key]=="" || isNaN(row[key])){
-                return false;
-            }
-        }
-        return true;
-    })
-    data = loadedData;
-    data.forEach(function (item) {
-        // Convert "Salary" to an integer
-        item['Salary in USD'] = +item['Salary in USD']/1000;
-    });
-    chart1 = makeDistroChart(data, 'Company Size', 'Salary in USD');
-    chart1.bind("#chart-distro1",{chartSize:{height:420, width:960}, constrainExtremes:false, axisLabels: {xAxis: 'Company Size', yAxis: 'Salary in USD'}});
+function read_data(){
+    d3.csv("Latest_Data_Science_Salaries.csv", function(loadedData){
+        var selected_attr = document.getElementById("feature").value;
+        //filter NaN
+        loadedData = loadedData.filter(function(row){
+            if(selected_attr == 'Overall') return true;
+            return row['Experience Level'] == selected_attr;
+        });
+
+        console.log(loadedData);
+
+        // let data = loadedData.filter(function(row){
+        //     for(let key in row) {
+        //         if (row[key]=="" || isNaN(row[key])){
+        //             return false;
+        //         }
+        //     }
+        //     return true;
+        // })
+
+        data = loadedData;
+
+        data.forEach(function (item) {
+            // Convert "Salary" to an integer
+            item['Salary in USD'] = +item['Salary in USD']/1000;
+        });
     
-    chart1.renderBoxPlot({boxWidth:6, showOutliers:false});
-    chart1.renderViolinPlot({violinWidth:90, colors:["#555"], resolution:60});
-});
+        render(data);
+    });
+}
+
 
 function makeDistroChart(dataset, xGroup, yValue) {
     /*
@@ -166,7 +176,7 @@ function makeDistroChart(dataset, xGroup, yValue) {
             }
             return metrics
         }
-
+        
         var current_x = null;
         var current_y = null;
         var current_row;
@@ -249,8 +259,8 @@ function makeDistroChart(dataset, xGroup, yValue) {
                 chart.divWidth = chartOptions.chartSize.width;
                 chart.divHeight = chartOptions.chartSize.height;
             } else {
-                chart.divWidth = 800;
-                chart.divHeight = 400;
+                chart.divWidth = 1200;
+                chart.divHeight = 800;
             }
 
             chart.width = chart.divWidth - chart.margin.left - chart.margin.right;
@@ -430,6 +440,8 @@ function makeDistroChart(dataset, xGroup, yValue) {
 
         chart.violinPlots.update = function () {
             var cName, cViolinPlot;
+            var selected_attr = document.getElementById("feature").value;
+            var vWidth = vOpts.violinWidth;
 
             for (cName in chart.groupObjs) {
                 cViolinPlot = chart.groupObjs[cName].violin;
@@ -445,13 +457,13 @@ function makeDistroChart(dataset, xGroup, yValue) {
                 var groupWidth = {left: null, right: null, middle: null};
                 if (vOpts && vOpts.violinWidth) {
                     if(cName == 'Medium'){
-                        groupWidth = updateGroupWidth(vOpts.violinWidth);
+                        groupWidth = updateGroupWidth(vWidth);
                     }
                     else if(cName == 'Large'){
-                        groupWidth = updateGroupWidth(vOpts.violinWidth * 3);
+                        groupWidth = updateGroupWidth(vWidth);
                     }
                     else{
-                        groupWidth = updateGroupWidth(vOpts.violinWidth * 5);
+                        groupWidth = updateGroupWidth(vWidth);
                     }
                         
                 } else {
@@ -855,3 +867,22 @@ function makeDistroChart(dataset, xGroup, yValue) {
 
     return chart;
 }
+
+function render(data){
+    d3.select("#chart-distro1").selectAll("*").remove();
+    chart1 = makeDistroChart(data, 'Company Size', 'Salary in USD');
+    chart1.bind("#chart-distro1",{chartSize:{height:420, width:1280}, constrainExtremes:false, axisLabels: {xAxis: 'Company Size', yAxis: 'Salary in USD'}});
+    
+    chart1.renderBoxPlot({boxWidth:6, showOutliers:false});
+    var selected_attr = document.getElementById("feature").value;
+    chart1.renderViolinPlot({violinWidth:100, colors:["#555"], resolution:60});
+    // if(selected_attr == 'Overall'){
+    //     chart1.renderViolinPlot({violinWidth:100, colors:["#555"], resolution:60});
+    // }
+    // else if(selected_attr == 'Executive'){
+    //     chart1.renderViolinPlot({violinWidth:100, colors:["#555"], resolution:60});
+    // }
+};
+
+
+read_data();

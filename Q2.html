@@ -28,6 +28,16 @@
                     <p>2. This visualization allows you to analyze the distribution of salaries based on different levels of professional experience. </p>
                     <p>3. Use the provided options to toggle between various display settings and gain insights into the salary landscape for different experience levels.</p>
                 </div>
+                <div style="padding-top: 13px;">
+                    Selected experience level by: 
+                    <select id='feature' onchange="read_data()">
+                        <option value="Overall">Overall</option>
+                        <option value="Executive">Executive</option>
+                        <option value="Senior">Senior</option>
+                        <option value="Mid">Mid</option>
+                        <option value="Entry">Entry</option>
+                    </select>
+                </div>
                 <!-- <article>--- What's the proportion of jobs in DS? ---</article> -->
                 <div id="body"></div>
             </div>
