@@ -197,7 +197,7 @@ function create_options(){
         // Convert Exp_set to array and sort it
         var sortedExpArray = Array.from(Exp_set).sort((a, b) => {
             // Define the order for Experience Levels: Entry, Mid, Executive, Senior
-            const order = ['Entry', 'Mid', 'Executive', 'Senior'];
+            const order = ['Entry', 'Mid', 'Senior', 'Executive'];
             return order.indexOf(a) - order.indexOf(b);
         });
 
